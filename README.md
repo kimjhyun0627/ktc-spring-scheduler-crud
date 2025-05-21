@@ -17,7 +17,6 @@ Host: localhost:8080
 ```json
 {
     "userId": "number",
-    "userName": "string",
     "password": "string",
     "title": "string",
     "task": "string"
