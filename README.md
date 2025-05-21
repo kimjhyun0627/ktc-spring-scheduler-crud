@@ -55,6 +55,22 @@ Host: localhost:8080
 ```json
 none
 ```
+```json
+{
+    "updatedAt": "string"
+}
+```
+```json
+{
+    "userName": "string"
+}
+```
+```json
+{
+    "updatedAt": "string",
+    "userName": "string"
+}
+```
 
 - response body
 ```json
