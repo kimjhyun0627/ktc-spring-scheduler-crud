@@ -189,20 +189,22 @@ none
 
 ### User
 ```markdown
-- id (PK)
-- name
-- email
+- id: BIGINT PRIMARY KEY AUTO_INCREMENT
+- name: VARCHAR(255) NOT NULL
+- email: VARCHAR(255) NOT NULL
+- registered_at: DATETIME NOT NULL
+- updated_at: DATETIME NOT NULL
 ```
 
 ### Schedule
 ```markdown
-- id (PK)
-- title
-- task
-- user_id (FK → User.id)
-- created_at
-- updated_at
-- password
+- id: BIGINT AUTO_INCREMENT PRIMARY KEY
+- title: VARCHAR(255) NOT NULL
+- task: TEXT NOT NULL
+- user_id: BIGINT NOT NULL FORIEGN KEY(User.id)
+- created_at: DATETIME NOT NULL
+- updated_at: DATETIME NOT NULL
+- password: VARCHAR(255) NOT NULL
 ```
 
 ### 관계
