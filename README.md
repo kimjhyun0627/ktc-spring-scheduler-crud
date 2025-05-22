@@ -43,11 +43,11 @@ Host: localhost:8080
 ---
 ### ✅ [GET] /schedule
 - 모든 일정 조회
-- 옵션 추가 가능
+- 옵션 추가
 
 - request
 ```http
-GET /schedule?username={string}&updatedAt={date} HTTP/1.1
+GET /schedule?username={string}&updatedStart={date}&updatedEnd={date} HTTP/1.1
 Host: localhost:8080
 ```
 
