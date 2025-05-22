@@ -8,7 +8,7 @@
 
 - request
 ```http
-GET /users HTTP/1.1
+POST /schedule HTTP/1.1
 Host: localhost:8080
 ```
 
@@ -43,10 +43,11 @@ Host: localhost:8080
 ---
 ### ✅ [GET] /schedule
 - 모든 일정 조회
+- 옵션 추가 가능
 
 - request
 ```http
-GET /users HTTP/1.1
+GET /schedule?username={string}&updatedAt={date} HTTP/1.1
 Host: localhost:8080
 ```
 
@@ -54,22 +55,6 @@ Host: localhost:8080
 
 ```json
 none
-```
-```json
-{
-    "updatedAt": "string"
-}
-```
-```json
-{
-    "userName": "string"
-}
-```
-```json
-{
-    "updatedAt": "string",
-    "userName": "string"
-}
 ```
 
 - response body
@@ -106,7 +91,7 @@ none
 
 - request
 ```http
-GET /users HTTP/1.1
+GET /schedule/{id} HTTP/1.1
 Host: localhost:8080
 ```
 
@@ -139,7 +124,7 @@ none
 
 - request
 ```http
-GET /users HTTP/1.1
+PATCH /schedule/{id} HTTP/1.1
 Host: localhost:8080
 ```
 
@@ -176,7 +161,7 @@ Host: localhost:8080
 
 - request
 ```http
-GET /users HTTP/1.1
+DELETE /schedule/{id} HTTP/1.1
 Host: localhost:8080
 ```
 
