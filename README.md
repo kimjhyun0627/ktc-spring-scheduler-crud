@@ -153,7 +153,7 @@ Host: localhost:8080
 
 - response code
 ```http
-200 OK | 400 Bad Request | 403 Unauthorized | 404 Not Found
+200 OK | 400 Bad Request | 403 Forbidden | 404 Not Found
 ```
 ---
 ### ✅ [DELETE] /schedule/{id}
@@ -180,7 +180,7 @@ none
 
 - response code
 ```http
-204 No Content | 400 Bad Request | 403 Unauthorized | 404 Not Found
+204 No Content | 400 Bad Request | 403 Forbidden | 404 Not Found
 ```
 
 ---
