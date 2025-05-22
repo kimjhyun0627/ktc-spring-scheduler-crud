@@ -47,7 +47,7 @@ Host: localhost:8080
 
 - request
 ```http
-GET /schedule?username={string}&updatedStart={date}&updatedEnd={date} HTTP/1.1
+GET /schedule?userId={number}&updatedStart={date}&updatedEnd={date} HTTP/1.1
 Host: localhost:8080
 ```
 
