@@ -8,6 +8,10 @@ import com.example.ktcspringschedulercrud.repository.ScheduleRepository;
 import com.example.ktcspringschedulercrud.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,8 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,7 +31,7 @@ public class ScheduleService {
     public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
         User user = userRepository.findById(scheduleRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User id: {" + scheduleRequestDto.getUserId() + "} not found"));
-        
+
         Schedule schedule = new Schedule(user, scheduleRequestDto.getTitle(), scheduleRequestDto.getTask(), scheduleRequestDto.getPassword());
         Schedule saved = scheduleRepository.save(schedule);
         return toResponse(saved);
@@ -39,18 +41,19 @@ public class ScheduleService {
         return toResponse(scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Schedule id: {" + id + "} not found")));
     }
 
-    public List<ScheduleResponseDto> searchSchedule(String updatedStart, String updatedEnd, Long userId) {
+    public Page<ScheduleResponseDto> searchSchedules(String updatedStart, String updatedEnd, Long userId, int page, int size) {
         try {
             LocalDateTime start = (updatedStart != null) ? LocalDate.parse(updatedStart).atStartOfDay() : LocalDateTime.MIN;
             LocalDateTime end = (updatedEnd != null) ? LocalDate.parse(updatedEnd).atTime(LocalTime.MAX) : LocalDateTime.now();
+            Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
 
-            List<Schedule> schedules = scheduleRepository.searchByConditions(start, end, userId);
-            return schedules.stream().map(this::toResponse).collect(Collectors.toList());
-
+            Page<Schedule> schedules = scheduleRepository.searchByConditions(start, end, userId, pageable);
+            return schedules.map(this::toResponse);
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("invalid format: {YYYY-MM-DD} expected");
         }
     }
+
 
     public ScheduleResponseDto updateScheduleById(Long id, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = scheduleRepository.findById(id)

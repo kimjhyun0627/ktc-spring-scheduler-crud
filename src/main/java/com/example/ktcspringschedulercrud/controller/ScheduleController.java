@@ -4,11 +4,11 @@ import com.example.ktcspringschedulercrud.dto.ScheduleRequestDto;
 import com.example.ktcspringschedulercrud.dto.ScheduleResponseDto;
 import com.example.ktcspringschedulercrud.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/schedule")
@@ -23,12 +23,16 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleResponseDto>> searchSchedule(@RequestParam(required = false) String updatedStart,
-                                                                    @RequestParam(required = false) String updatedEnd,
-                                                                    @RequestParam(required = false) Long userId) {
-        List<ScheduleResponseDto> schedules = scheduleService.searchSchedule(updatedStart, updatedEnd, userId);
+    public ResponseEntity<Page<ScheduleResponseDto>> searchSchedules(@RequestParam(required = false) String updatedStart,
+                                                                     @RequestParam(required = false) String updatedEnd,
+                                                                     @RequestParam(required = false) Long userId,
+                                                                     @RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "10") int size) {
+
+        Page<ScheduleResponseDto> schedules = scheduleService.searchSchedules(updatedStart, updatedEnd, userId, page, size);
         return ResponseEntity.ok().body(schedules);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> getScheduleById(@PathVariable Long id) {
