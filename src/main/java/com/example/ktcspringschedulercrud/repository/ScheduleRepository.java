@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    @Query("SELECT s FROM Schedule s " + "WHERE s.updatedAt BETWEEN :start AND :end " + "AND (:name IS NULL OR s.user.name = :name) " +
+    @Query("SELECT s FROM Schedule s " + "WHERE s.updatedAt BETWEEN :start AND :end " + "AND (:userId IS NULL OR s.user.id = :userId) " +
             "ORDER BY s.updatedAt DESC")
-    List<Schedule> searchByConditions(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("name") String name);
+    List<Schedule> searchByConditions(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, @Param("userId") Long userId);
 
 }
