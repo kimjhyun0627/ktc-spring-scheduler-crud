@@ -31,8 +31,8 @@ Host: localhost:8080
     "userName": "string",
     "title": "string",
     "task": "string"
-    "createdAt": "localDateTime",
-    "updatedAt": "localDateTime"
+    "createdAt": "string(localDateTime)",
+    "updatedAt": "string(localDateTime)"
 }
 ```
 
@@ -47,7 +47,7 @@ Host: localhost:8080
 
 - request
 ```http
-GET /schedule?userId={number}&updatedStart={date}&updatedEnd={date} HTTP/1.1
+GET /schedule?userId={number}&updatedStart={date}&updatedEnd={date}&page={number}&size={number} HTTP/1.1
 Host: localhost:8080
 ```
 
@@ -59,26 +59,44 @@ none
 
 - response body
 ```json
-[
-    {
-        "id": "number",
-        "userId": "number",
-        "userName": "string",
-        "title": "string",
-        "task": "string"
-        "createdAt": "localDateTime",
-        "updatedAt": "localDateTime"
+{
+    "content": [
+        {
+            "id": "number",
+            "userId": "number",
+            "userName": "string",
+            "title": "string",
+            "task": "string",
+            "createdAt": "string(localDateTime)",
+            "updatedAt": "string(localDateTime)"
+        }
+    ],
+    "pageable": {
+        "pageNumber": "number",
+        "pageSize": "number",
+        "sort": {
+            "empty": "boolean",
+            "sorted": "boolean",
+            "unsorted": "boolean"
+        },
+        "offset": "number",
+        "paged": "boolean",
+        "unpaged": "boolean"
     },
-    {
-        "id": "number",
-        "userId": "number",
-        "userName": "string",
-        "title": "string",
-        "task": "string"
-        "createdAt": "localDateTime",
-        "updatedAt": "localDateTime"
+    "last": "boolean",
+    "totalPages": "number",
+    "totalElements": "number",
+    "size": "number",
+    "number": "number",
+    "sort": {
+        "empty": "boolean",
+        "sorted": "boolean",
+        "unsorted": "boolean"
     },
-]
+    "first": "boolean",
+    "numberOfElements": "number",
+    "empty": "boolean"
+}
 ```
 
 - response code
@@ -109,8 +127,8 @@ none
     "userName": "string",
     "title": "string",
     "task": "string"
-    "createdAt": "localDateTime",
-    "updatedAt": "localDateTime"
+    "createdAt": "string(localDateTime)",
+    "updatedAt": "string(localDateTime)"
 }
 ```
 
@@ -146,8 +164,8 @@ Host: localhost:8080
     "userName": "string",
     "title": "string",
     "task": "string"
-    "createdAt": "localDateTime",
-    "updatedAt": "localDateTime"
+    "createdAt": "string(localDateTime)",
+    "updatedAt": "string(localDateTime)"
 }
 ```
 
