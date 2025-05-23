@@ -4,6 +4,9 @@ import com.example.ktcspringschedulercrud.dto.ScheduleRequestDto;
 import com.example.ktcspringschedulercrud.dto.ScheduleResponseDto;
 import com.example.ktcspringschedulercrud.entity.Schedule;
 import com.example.ktcspringschedulercrud.entity.User;
+import com.example.ktcspringschedulercrud.exception.InvalidPasswordException;
+import com.example.ktcspringschedulercrud.exception.ScheduleNotFoundException;
+import com.example.ktcspringschedulercrud.exception.UserNotFoundException;
 import com.example.ktcspringschedulercrud.repository.ScheduleRepository;
 import com.example.ktcspringschedulercrud.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class ScheduleService {
 
     public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
         User user = userRepository.findById(scheduleRequestDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User id: {" + scheduleRequestDto.getUserId() + "} not found"));
+                .orElseThrow(() -> new UserNotFoundException(scheduleRequestDto.getUserId().toString()));
 
         Schedule schedule = new Schedule(user, scheduleRequestDto.getTitle(), scheduleRequestDto.getTask(), scheduleRequestDto.getPassword());
         Schedule saved = scheduleRepository.save(schedule);
@@ -38,7 +39,7 @@ public class ScheduleService {
     }
 
     public ScheduleResponseDto getScheduleById(Long id) {
-        return toResponse(scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Schedule id: {" + id + "} not found")));
+        return toResponse(scheduleRepository.findById(id).orElseThrow(() -> new ScheduleNotFoundException(id.toString())));
     }
 
     public Page<ScheduleResponseDto> searchSchedules(String updatedStart, String updatedEnd, Long userId, int page, int size) {
@@ -56,11 +57,10 @@ public class ScheduleService {
 
 
     public ScheduleResponseDto updateScheduleById(Long id, ScheduleRequestDto scheduleRequestDto) {
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule {" + id + "} not found"));
+        Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new ScheduleNotFoundException(id.toString()));
 
         if (!schedule.getPassword().equals(scheduleRequestDto.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid password: " + "{" + scheduleRequestDto.getPassword() + "}");
+            throw new InvalidPasswordException(scheduleRequestDto.getPassword());
         }
 
         if (scheduleRequestDto.getTitle() != null) schedule.setTitle(scheduleRequestDto.getTitle());
@@ -76,11 +76,10 @@ public class ScheduleService {
     }
 
     public void deleteScheduleById(Long id, ScheduleRequestDto scheduleRequestDto) {
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not found: {" + id + "}"));
+        Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new ScheduleNotFoundException(id.toString()));
 
         if (!schedule.getPassword().equals(scheduleRequestDto.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid password: " + "{" + scheduleRequestDto.getPassword() + "}");
+            throw new InvalidPasswordException(scheduleRequestDto.getPassword());
         }
 
         User user = schedule.getUser();
