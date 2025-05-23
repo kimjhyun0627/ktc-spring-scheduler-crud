@@ -3,6 +3,7 @@ package com.example.ktcspringschedulercrud.controller;
 import com.example.ktcspringschedulercrud.dto.ScheduleRequestDto;
 import com.example.ktcspringschedulercrud.dto.ScheduleResponseDto;
 import com.example.ktcspringschedulercrud.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto) {
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@Valid @RequestBody ScheduleRequestDto scheduleRequestDto) {
         ScheduleResponseDto scheduleResponseDto = scheduleService.createSchedule(scheduleRequestDto);
         return ResponseEntity.created(URI.create("/schedule/" + scheduleResponseDto.getId())).body(scheduleResponseDto);
     }
