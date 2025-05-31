@@ -7,8 +7,8 @@ import com.example.ktcspringschedulercrud.entity.User;
 import com.example.ktcspringschedulercrud.exception.InvalidPasswordException;
 import com.example.ktcspringschedulercrud.exception.ScheduleNotFoundException;
 import com.example.ktcspringschedulercrud.exception.UserNotFoundException;
-import com.example.ktcspringschedulercrud.repository.ScheduleRepository;
-import com.example.ktcspringschedulercrud.repository.UserRepository;
+import com.example.ktcspringschedulercrud.repository.JdbcScheduleRepository;
+import com.example.ktcspringschedulercrud.repository.JdbcUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,9 +27,10 @@ import java.time.format.DateTimeParseException;
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
-    private final UserRepository userRepository;
-    private final ScheduleRepository scheduleRepository;
+    private final JdbcUserRepository userRepository;
+    private final JdbcScheduleRepository scheduleRepository;
 
+    @Transactional
     public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
         User user = userRepository.findById(scheduleRequestDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(scheduleRequestDto.getUserId().toString()));
@@ -38,14 +40,16 @@ public class ScheduleService {
         return toResponse(saved);
     }
 
+    @Transactional(readOnly = true)
     public ScheduleResponseDto getScheduleById(Long id) {
         return toResponse(scheduleRepository.findById(id).orElseThrow(() -> new ScheduleNotFoundException(id.toString())));
     }
 
+    @Transactional(readOnly = true)
     public Page<ScheduleResponseDto> searchSchedules(String updatedStart, String updatedEnd, Long userId, int page, int size) {
         try {
-            LocalDateTime start = (updatedStart != null) ? LocalDate.parse(updatedStart).atStartOfDay() : LocalDateTime.MIN;
-            LocalDateTime end = (updatedEnd != null) ? LocalDate.parse(updatedEnd).atTime(LocalTime.MAX) : LocalDateTime.now();
+            LocalDateTime start = (updatedStart != null) ? LocalDate.parse(updatedStart).atStartOfDay() : null;
+            LocalDateTime end = (updatedEnd != null) ? LocalDate.parse(updatedEnd).atTime(LocalTime.MAX) : null;
             Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
 
             Page<Schedule> schedules = scheduleRepository.searchByConditions(start, end, userId, pageable);
@@ -55,7 +59,7 @@ public class ScheduleService {
         }
     }
 
-
+    @Transactional
     public ScheduleResponseDto updateScheduleById(Long id, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new ScheduleNotFoundException(id.toString()));
 
@@ -75,6 +79,7 @@ public class ScheduleService {
         return toResponse(updated);
     }
 
+    @Transactional
     public void deleteScheduleById(Long id, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new ScheduleNotFoundException(id.toString()));
 
@@ -89,7 +94,6 @@ public class ScheduleService {
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
     }
-
 
     private ScheduleResponseDto toResponse(Schedule schedule) {
         return new ScheduleResponseDto(schedule.getId(),
